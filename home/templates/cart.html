@@ -21,20 +21,37 @@
           <div class="cart-item-details">
             <h5 class="cart-item-name">{{items.product.title}}</h5>
             <p class="cart-item-price">${{ items.product.price }}</p>
-            <div class="flex">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="flex">
                 <button id="add-quantity" class="btn btn-primary">+</button>
-                <input type="number" name="quantity" id="quantityField" value="{{items.quantity}}" style="width:30px;">
-                <button id="remove-quantityy" class="btn btn-primary">-</button>
+                <input type="hidden" name="id" class="form-control" id="cart-id" value="{{ items.id }}">
+                <input type="number" name="quantity" id="quantityField" value="{{items.quantity}}" style="width:45px;">
+               {% if items.quantity == 1 %}
+               <button id="#" class="btn btn-primary" disabled >-</button>
+               {% else %}
+               <button id="remove-quantity" class="btn btn-primary">-</button>
+               {% endif %}
             </div>
+            </form>
+           <form method="POST">
+            {% csrf_token %}
             <div class="flex">
               <input type="hidden" name="id" class="form-control" id="cart-id" value="{{ items.id }}">
               <button id="button-delete" value="{{ items.id }}" class="btn btn-danger">Remove</button>
           </div>
+           </form>
           </div>
         </div>
 
       </div>
     </div>
+
+    {% for message in messages %}
+    
+    <span class="text-success">{{message}}</span>
+    {% endfor %}
+
     {% endfor %}
 
     <div class="containerd grid gap-2 my-5 mx-auto">
@@ -53,24 +70,27 @@
 <script>
   const button_del = document.querySelectorAll('#button-delete');
   const increment = document.querySelectorAll('#add-quantity');
-  const removeQuantity = document.querySelectorAll("#remove-quantity");
-  const inputValue = document.querySelectorAll('#quantityField')
+  const decrease = document.querySelectorAll("#remove-quantity");
 
   <!-- delete cart -->
   button_del.forEach((btn,index)=>{
     btn.addEventListener('click',function(event){
+      event.preventDefault()
       const el = event.target.parentElement;
       const id = el.children[0].value
       var csrftoken = getCookie('csrftoken');
       console.log(id)
+      console.log(csrftoken)
        $.ajax({
-        type: 'POST',
-          url:'/delete_cart/' + id  + "/",
+        type: 'DELETE',
+        method:"POST",
+          url:'delete_cart/' + id  + "/",
           headers: {
             'X-CSRFToken': csrftoken
           },
        }).then((res)=>{
-        window.location.reload()
+        alert("item deleted successfully");
+        window.location.reload();
        })
 
 
@@ -80,16 +100,53 @@
   //QUANTITY INCREMENT
   increment.forEach((btn,index)=>{
     btn.addEventListener('click',function(event){
-     const el =  event.target.parentElement;
-     let inputText = el.children[1];
-     
-
-     
-
-
-     console.log(inputText)
+    event.preventDefault()
+    const el = event.target.parentElement;
+    const id = el.children[1].value;
+    var csrftoken = getCookie('csrftoken');
+    console.log(csrftoken)
+      $.ajax({
+        url:'add_qauntity/' + id + "/",
+        method:"POST",
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        data:{
+          product_id : id,
+        }
+      }).then((response)=>{
+        console.log('added');
+        window.location.reload();
+      })
+    
+    
     })
-  })
+  });
+
+  // DECREASE QUANTITY
+  decrease.forEach((btn,index)=>{
+    btn.addEventListener('click',function(event){
+    event.preventDefault()
+    const el = event.target.parentElement;
+    const id = el.children[1].value;
+    var csrftoken = getCookie('csrftoken');
+    console.log(csrftoken)
+      $.ajax({
+        url:'decrease_quantity/' + id + "/",
+        method:"POST",
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        data:{
+          product_id : id,
+        }
+      }).then((response)=>{
+        window.location.reload();
+      })
+    
+    
+    })
+  });
   
   
   
