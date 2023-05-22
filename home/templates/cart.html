@@ -1,0 +1,142 @@
+{% include 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% endblock %}
+
+
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="container mt-5">
+
+{% for items in cart %}
+    <div class="cart-item">
+      <div class="row">
+        <div class="col-md-2">
+          <img src="{{ items.product.image.url }}" alt="Product Image">
+        </div>
+        <div class="col-md-8">
+          <div class="cart-item-details">
+            <h5 class="cart-item-name">{{items.product.title}}</h5>
+            <p class="cart-item-price">${{ items.product.price }}</p>
+            <div class="flex">
+                <button  class="btn btn-primary">+</button>
+                <button class="btn btn-primary">-</button>
+            </div>
+            <div class="flex">
+              <input type="hidden" name="id" class="form-control" id="cart-id" value="{{ items.id }}">
+              <button id="button-delete" value="{{ items.id }}" class="btn btn-danger">Remove</button>
+          </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+   
+  </div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  const button_del = document.querySelectorAll('#button-delete');
+  
+  button_del.forEach((btn,index)=>{
+    btn.addEventListener('click',function(event){
+      const el = event.target.parentElement;
+      const id = el.children[0].value
+      var csrftoken = getCookie('csrftoken');
+      console.log(id)
+       $.ajax({
+        type: 'POST',
+          url:'/delete_cart/' + id  + "/",
+          headers: {
+            'X-CSRFToken': csrftoken
+          },
+       }).then((res)=>{
+        window.location.reload()
+       })
+
+
+    })
+  })
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock scripts %}
+
+
+
+
+
+
+<style>
+    .cart-item {
+      margin-bottom: 20px;
+    }
+    .cart-item img {
+      max-width: 100px;
+    }
+    .cart-item-details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+    .cart-item-name {
+      margin-bottom: 0;
+    }
+    .cart-item-price {
+      font-weight: bold;
+    }
+    .cart-item-buttons {
+      display: flex;
+      align-items: center;
+    }
+    .cart-item-buttons button {
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .cart-item-buttons .btn-increment {
+      background-color: #28a745;
+      color: white;
+      margin-right: 5px;
+    }
+    .cart-item-buttons .btn-decrement {
+      background-color: #dc3545;
+      color: white;
+    }
+    .cart-item-buttons .btn-remove {
+      background-color: #343a40;
+      color: white;
+      margin-left: 10px;
+    }
+  </style>

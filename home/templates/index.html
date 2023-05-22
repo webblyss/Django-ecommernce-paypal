@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}home{% endblock title %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container my-5">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+        {% for item in product %}
+        <div class="col mb-4">
+            <div class="card">
+                <img style="height: 300px" src="{{ item.image.url }}" class="card-img-top" alt="Product 1">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">${{ item.price }}</p>
+                    <form id="add-to-cart-form" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" class="form-control" id="product-id" value="{{ item.id }}">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+
+{% block scripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    
+    const form = document.querySelectorAll('#add-to-cart-form');
+    form.forEach((value,index)=>{
+     value.addEventListener('submit',function(event){
+         event.preventDefault()
+         const parentEl = event.target;
+         const crsf_token = parentEl.children[0].value;
+         const cart_id = parentEl.children[1].value
+         console.log(crsf_token)
+         console.log(cart_id)
+    
+         $.ajax({
+             method:"POST",
+             url:"/add_to_cart/" + cart_id + "/",
+             data:{
+                 product_id : cart_id,
+                 csrfmiddlewaretoken : crsf_token
+             }
+          
+         }).then((response)=>{
+            alert('item added to cart successfully')
+            window.location.reload()
+         })
+     })
+    })
+</script>
+  
+  {% endblock scripts %}
+
+{% endblock content %}
+
