@@ -5,12 +5,11 @@ from django.contrib.auth.decorators import login_required
 
 from cart.models import Cart, CartItem
 
-cart_count = 0
 
 def  home(request):
     product  = Product.objects.all()
 
-    return render(request,'index.html',{"product":product,"total_cart":cart_count})
+    return render(request,'index.html',{"product":product,})
 
 
 @login_required

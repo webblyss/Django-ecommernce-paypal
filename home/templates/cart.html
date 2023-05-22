@@ -22,8 +22,9 @@
             <h5 class="cart-item-name">{{items.product.title}}</h5>
             <p class="cart-item-price">${{ items.product.price }}</p>
             <div class="flex">
-                <button  class="btn btn-primary">+</button>
-                <button class="btn btn-primary">-</button>
+                <button id="add-quantity" class="btn btn-primary">+</button>
+                <input type="number" name="quantity" id="quantityField" value="{{items.quantity}}" style="width:30px;">
+                <button id="remove-quantityy" class="btn btn-primary">-</button>
             </div>
             <div class="flex">
               <input type="hidden" name="id" class="form-control" id="cart-id" value="{{ items.id }}">
@@ -35,10 +36,13 @@
       </div>
     </div>
     {% endfor %}
-    </div>
-   
-  </div>
 
+    <div class="containerd grid gap-2 my-5 mx-auto">
+      <a href="/" class="btn btn-success col-md-4 mx-3">Continue shopping</a>
+      <a href="#" class="btn btn-primary col-md-4">Check out cart $ {{total}}</a>
+    </div>
+
+    </div>
 {% endblock %}
 
 
@@ -48,7 +52,11 @@
 
 <script>
   const button_del = document.querySelectorAll('#button-delete');
-  
+  const increment = document.querySelectorAll('#add-quantity');
+  const removeQuantity = document.querySelectorAll("#remove-quantity");
+  const inputValue = document.querySelectorAll('#quantityField')
+
+  <!-- delete cart -->
   button_del.forEach((btn,index)=>{
     btn.addEventListener('click',function(event){
       const el = event.target.parentElement;
@@ -68,6 +76,35 @@
 
     })
   })
+ 
+  //QUANTITY INCREMENT
+  increment.forEach((btn,index)=>{
+    btn.addEventListener('click',function(event){
+     const el =  event.target.parentElement;
+     let inputText = el.children[1];
+     
+
+     
+
+
+     console.log(inputText)
+    })
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -82,6 +119,12 @@
     }
     return cookieValue;
   }
+
+
+
+
+
+
 </script>
 {% endblock scripts %}
 

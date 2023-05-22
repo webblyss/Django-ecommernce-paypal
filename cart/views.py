@@ -8,13 +8,18 @@ from django.http import HttpResponseRedirect
 def cart(request):
     carts = CartItem.objects.all()
     data = list()
+    price = []
     for cart_ in carts:
         if cart_.cart.user.username == request.user.username:
             data.append(cart_)
-            print(cart_)
     
-        
-    return render(request,'cart.html',{"cart":data})
+    # CALCULATE TOTAL CART EXPENSE
+    for x in data:
+        price.append(int(x.product.price))
+    
+    total_price = sum(price)
+    
+    return render(request,'cart.html',{"cart":data,"cart_total":len(data),"total":total_price})
 
 
 
@@ -28,8 +33,12 @@ def delete_cart(request,product_id):
 
 def addQuantity(request,pk):
     
+    cart = CartItem.objects.get(pk=pk)                                    
     
-    return
+    
+    
+    
+    return HttpResponseRedirect('')
 
 
 
